@@ -1,0 +1,120 @@
+<mxfile host="Electron" agent="Mozilla/5.0" version="24.0.0">
+  <diagram name="FullClassroomERD" id="full-erd">
+    <mxGraphModel dx="2000" dy="2000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="ent_user" value="&lt;b&gt;Người dùng (User)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="400" y="400" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="att_u_1" value="&lt;b&gt;&lt;u&gt;Ma_ND (PK)&lt;/u&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="300" y="320" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_1" edge="1" parent="1" source="ent_user" target="att_u_1" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="att_u_2" value="Họ tên" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="400" y="310" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_2" edge="1" parent="1" source="ent_user" target="att_u_2" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="att_u_3" value="Email" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="490" y="320" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_3" edge="1" parent="1" source="ent_user" target="att_u_3" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="att_u_4" value="Vai trò" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="290" y="410" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_4" edge="1" parent="1" source="ent_user" target="att_u_4" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ent_instr" value="&lt;b&gt;Giảng viên&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="400" y="600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_is_a" value="Là" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="435" y="500" width="70" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_is_1" edge="1" parent="1" source="ent_user" target="rel_is_a" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_is_2" edge="1" parent="1" source="rel_is_a" target="ent_instr" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="att_i_1" value="Học vị" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="300" y="610" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_i_1" edge="1" parent="1" source="ent_instr" target="att_i_1" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ent_course" value="&lt;b&gt;Khóa học&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="850" y="400" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="att_c_1" value="&lt;b&gt;&lt;u&gt;Ma_KH (PK)&lt;/u&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="980" y="320" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_1" edge="1" parent="1" source="ent_course" target="att_c_1" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="att_c_2" value="Tên khóa" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="880" y="310" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_2" edge="1" parent="1" source="ent_course" target="att_c_2" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="att_c_3" value="Giá" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="780" y="320" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_3" edge="1" parent="1" source="ent_course" target="att_c_3" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="rel_enroll" value="Đăng ký" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="620" y="400" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_en_1" edge="1" parent="1" source="ent_user" target="rel_enroll" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /><mxPoint x="450" y="550" as="offset" /></mxCell>
+        <mxCell id="lbl_n1" value="N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="l_en_1"><mxGeometry x="-0.8" relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_en_2" edge="1" parent="1" source="rel_enroll" target="ent_course" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lbl_n2" value="N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="l_en_2"><mxGeometry x="0.8" relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ent_cat" value="Danh mục" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="850" y="150" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_cat" value="Thuộc" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="880" y="270" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_cat_1" edge="1" parent="1" source="ent_cat" target="rel_cat" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lbl_1a" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="l_cat_1"><mxGeometry x="-0.7" relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_cat_2" edge="1" parent="1" source="rel_cat" target="ent_course" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lbl_n2a" value="N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="l_cat_2"><mxGeometry x="0.7" relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ent_lesson" value="Bài học" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="850" y="600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_lesson" value="Có" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="880" y="500" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_les_1" edge="1" parent="1" source="ent_course" target="rel_lesson" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lbl_1b" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="l_les_1"><mxGeometry x="-0.7" relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_les_2" edge="1" parent="1" source="rel_lesson" target="ent_lesson" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lbl_n2b" value="N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="l_les_2"><mxGeometry x="0.7" relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ent_quiz" value="Bài kiểm tra (Quiz)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="850" y="800" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_quiz" value="Gồm" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="880" y="700" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_qz_1" edge="1" parent="1" source="ent_lesson" target="rel_quiz" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_qz_2" edge="1" parent="1" source="rel_quiz" target="ent_quiz" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ent_result" value="&lt;b&gt;Kết quả (Result)&lt;/b&gt;" style="shape=ext;double=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="400" y="800" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_do" value="Làm" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="640" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_do_1" edge="1" parent="1" source="ent_user" target="rel_do" style="endArrow=none;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="180" y="430" /><mxPoint x="180" y="760" /><mxPoint x="690" y="760" /></Array></mxGeometry></mxCell>
+        <mxCell id="l_do_2" edge="1" parent="1" source="rel_do" target="ent_quiz" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_do_3" edge="1" parent="1" source="ent_result" target="rel_do" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="att_r_1" value="Điểm số" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="430" y="890" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_1" edge="1" parent="1" source="ent_result" target="att_r_1" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="rel_teach" value="Dạy" style="shape=rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="630" y="600" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l_t_1" edge="1" parent="1" source="ent_instr" target="rel_teach" style="endArrow=none;html=1;rounded=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l_t_2" edge="1" parent="1" source="rel_teach" target="ent_course" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0.5;entryY=1;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="920" y="630" /></Array></mxGeometry></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
