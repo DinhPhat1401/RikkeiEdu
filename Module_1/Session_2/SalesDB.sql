@@ -38,3 +38,4 @@ CREATE TABLE sales.OrderItems (
         FOREIGN KEY (product_id) 
         REFERENCES sales.Products(product_id)
 );
+
