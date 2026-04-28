@@ -1,40 +1,41 @@
-set search_path to session06
+create schema session09;
+SET search_path TO session09;
 
+DROP TABLE IF EXISTS Products;
 
-CREATE TABLE Orders (
-    id SERIAL PRIMARY KEY,
-    customer_id INT,
-    order_date DATE,
-    total_amount NUMERIC(10,2)
+CREATE TABLE Products (
+    product_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    price NUMERIC,
+    category_id INT
 );
 
-
-INSERT INTO Orders (customer_id, order_date, total_amount) VALUES
-(1, '2024-05-10', 20000000.00),
-(2, '2024-08-15', 35000000.00), 
-(3, '2025-01-20', 10000000.00),
-(4, '2025-03-12', 5000000.00),  
-(1, '2026-02-14', 60000000.00), 
-(5, '2026-04-01', 1500000.00);
-
--------------------------------------------------------------------
+INSERT INTO Products (name, price, category_id) VALUES
+('Bàn gỗ', 1000, 1),
+('Ghế xoay', 500, 1),
+('Laptop', 2000, 2);
 
 
-SELECT 
-    SUM(total_amount) AS total_revenue,
-    COUNT(id) AS total_orders,
-    AVG(total_amount) AS average_order_value
-FROM Orders;
+CREATE OR REPLACE PROCEDURE update_product_price(
+    p_category_id INT, 
+    p_increase_percent NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    rec RECORD;         
+    v_new_price NUMERIC; 
+BEGIN
+    FOR rec IN SELECT product_id, price FROM Products WHERE category_id = p_category_id 
+    LOOP
+        v_new_price := rec.price * (1 + p_increase_percent / 100);
+        UPDATE Products 
+        SET price = v_new_price 
+        WHERE product_id = rec.product_id;
+    END LOOP;
+END;
+$$;
 
+CALL update_product_price(1, 10);
 
-SELECT 
-    EXTRACT(YEAR FROM order_date) AS order_year,
-    SUM(total_amount) AS yearly_revenue
-FROM Orders
-GROUP BY EXTRACT(YEAR FROM order_date)
-HAVING SUM(total_amount) > 50000000;
-
-
-SELECT * FROM Orders
-ORDER BY total_amount DESC
-LIMIT 5;
+SELECT * FROM Products;

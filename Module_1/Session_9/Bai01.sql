@@ -1,32 +1,30 @@
-create schema session06
-set search_path to session06
+create schema session09;
+set search_path to session09;
 
 
-CREATE TABLE Product (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    category VARCHAR(50),
-    price NUMERIC(10,2),
-    stock INT
+CREATE TABLE Orders (
+    order_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    total_amount NUMERIC(10,2)
 );
 
-INSERT INTO Product (name, category, price, stock) VALUES
-('Laptop Dell XPS', 'Điện tử', 25000000.00, 10),
-('iPhone 13 Mini', 'Điện tử', 9500000.00, 5),
-('Máy tính bảng Galaxy Tab', 'Điện tử', 7000000.00, 15),
-('Tủ lạnh LG', 'Gia dụng', 12000000.00, 3),
-('Lò vi sóng Sharp', 'Gia dụng', 2500000.00, 20);
+
+-- Em tham khảo AI để insert 100000 dòng record
+INSERT INTO Orders (customer_id, order_date, total_amount)
+SELECT 
+    (random() * 1000)::INT, 
+    CURRENT_DATE - (random() * 365)::INT * INTERVAL '1 day',
+    (random() * 5000)::NUMERIC
+FROM generate_series(1, 100000);
 
 
-----------------
-SELECT * FROM Product;
+EXPLAIN ANALYZE 
+SELECT * FROM Orders WHERE customer_id = 500;
+-- trước khi tạo index Execution Time: 2.457 ms
 
------------------
-SELECT * FROM Product ORDER BY price DESC LIMIT 3;
--------------------
+CREATE INDEX idx_orders_customer_id ON Orders(customer_id);
 
-SELECT * FROM Product 
-WHERE category = 'Điện tử' AND price < 10000000;
---------------------
-
-SELECT * FROM Product ORDER BY stock ASC;
+EXPLAIN ANALYZE 
+SELECT * FROM Orders WHERE customer_id = 500;
+-- sau khi tạo index Execution Time: 0.153 ms

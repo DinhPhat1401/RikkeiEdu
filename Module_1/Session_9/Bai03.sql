@@ -1,33 +1,36 @@
+create schema session09;
+set search_path to session09;
 
-set search_path to session06
 
-CREATE TABLE Customer (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100),
-    phone VARCHAR(20),
-    points INT
+CREATE TABLE Products (
+    product_id SERIAL PRIMARY KEY,
+    category_id INT,
+    price NUMERIC(10,2),
+    stock_quantity INT
 );
 
-INSERT INTO Customer (name, email, phone, points) VALUES
-('Nguyễn Văn A', 'anguyen@gmail.com', '0901234567', 500),
-('Trần Thị B', 'btran@gmail.com', '0912345678', 850),
-('Lê Văn C', NULL, '0923456789', 300),
-('Phạm Minh D', 'dpham@gmail.com', '0934567890', 1200),
-('Nguyễn Văn A', 'an.v2@gmail.com', '0945678901', 450),
-('Hoàng Thị E', 'ehoang@gmail.com', '0956789012', 950),
-('Lý Văn F', 'fly@exgmailample.com', '0967890123', 600);
+
+INSERT INTO Products (category_id, price, stock_quantity)
+SELECT 
+    (random() * 20 + 1)::INT, 
+    (random() * 1000 + 10)::NUMERIC,
+    (random() * 500)::INT
+FROM generate_series(1, 100000);
 
 
-------------
-SELECT DISTINCT name FROM Customer;
 
-SELECT * FROM Customer 
-WHERE email IS NULL;
 
-SELECT * FROM Customer 
-ORDER BY points DESC 
-LIMIT 3 OFFSET 1;
+EXPLAIN ANALYZE 
+SELECT * FROM Products 
+WHERE category_id = 5 
+ORDER BY price;
 
-SELECT * FROM Customer 
-ORDER BY name DESC;
+CREATE INDEX idx_products_category ON Products(category_id);
+CLUSTER Products USING idx_products_category;
+
+CREATE INDEX idx_products_price ON Products(price);
+
+EXPLAIN ANALYZE 
+SELECT * FROM Products 
+WHERE category_id = 5 
+ORDER BY price;

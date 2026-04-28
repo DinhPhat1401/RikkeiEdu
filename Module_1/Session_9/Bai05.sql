@@ -1,36 +1,31 @@
-create schema session06;
-set search_path to session06
-
-CREATE TABLE Course (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(100),
-    instructor VARCHAR(50),
-    price NUMERIC(10,2),
-    duration INT -- số giờ học
-);
-
-INSERT INTO Course (title, instructor, price, duration) VALUES
-('Lập trình SQL cơ bản', 'Nguyễn Văn A', 1500000.00, 20),
-('Khóa học Demo SQL nâng cao', 'Trần Thị B', 2500000.00, 45),
-('Java Web Fullstack', 'Lê Văn C', 5000000.00, 100),
-('Python cho người mới', 'Phạm Minh D', 800000.00, 35),
-('Thiết kế giao diện Demo', 'Hoàng Thị E', 1200000.00, 15),
-('Phân tích dữ liệu với sql', 'Lý Văn F', 1800000.00, 40);
+set search_path to session09;
 
 
-UPDATE Course 
-SET price = price * 1.15 
-WHERE duration > 30;
+CREATE OR REPLACE PROCEDURE calculate_total_sales(
+    start_date DATE, 
+    end_date DATE, 
+    OUT total NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    SELECT SUM(amount)
+    INTO total
+    FROM Sales
+    WHERE sale_date BETWEEN start_date AND end_date;
+    IF total IS NULL THEN
+        total := 0;
+    END IF;
+END;
+$$;
 
-DELETE FROM Course 
-WHERE title LIKE '%Demo%';
+DO $$
+DECLARE
+    v_revenue_report NUMERIC; -- Biến để hứng kết quả từ Procedure
+BEGIN
+   
+    CALL calculate_total_sales('2024-01-01', '2024-01-10', v_revenue_report);
+    RAISE NOTICE 'Tổng doanh thu trong khoảng thời gian chọn là: %', v_revenue_report;
+END $$;
 
 
-SELECT * FROM Course 
-WHERE title ILIKE '%SQL%';
-
-
-SELECT * FROM Course 
-WHERE price BETWEEN 500000 AND 2000000 
-ORDER BY price DESC 
-LIMIT 3;
