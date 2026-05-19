@@ -1,16 +1,17 @@
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Chương trình tính hóa đơn siêu thị.");
-        System.out.println("Nhập tên khách hàng: ");
+        System.out.print("Nhập tên khách hàng: ");
         String cusName = sc.nextLine();
-        System.out.println("Nhập tên sản phẩm: ");
+        System.out.print("Nhập tên sản phẩm: ");
         String proName = sc.nextLine();
-        System.out.println("Nhập giá sản phẩm: ");
+        System.out.print("Nhập giá sản phẩm: ");
         double price = Double.parseDouble(sc.nextLine());
-        System.out.println("Nhập số lượng: ");
+        System.out.print("Nhập số lượng: ");
         int quantity = Integer.parseInt(sc.nextLine());
         boolean isMember = false;
         System.out.println("Khách hàng có phải là thành viên không? (Y/N): ");
@@ -25,16 +26,14 @@ public class Main {
         }
             total = price * quantity;
         double vat = total * 0.08;
+        DecimalFormat df = new DecimalFormat("#,###");
         System.out.println("Khách hàng: " + cusName);
         System.out.println("Sản phẩm: " + proName);
-        System.out.println("Giá: " + price);
+        System.out.println("Giá: " + df.format(price).replace(",",".")  + " VNĐ");
         System.out.println("Số lượng: " + quantity);
-        System.out.println("Thành tiền: " + total);
-        System.out.println("Giảm giá: " + discount);
-        System.out.println("Tiền VAT: " + vat);
-        System.out.println("Tổng tiền thanh toán: " + (total - discount + vat));
-
-
-
+        System.out.println("Thành tiền: " + df.format(total).replace(",",".") + " VNĐ");
+        System.out.println("Giảm giá: " + df.format(discount).replace(",",".") );
+        System.out.println("Tiền VAT: " + df.format(vat).replace(",","."));
+        System.out.println("Tổng tiền thanh toán: " + df.format((total - discount + vat)).replace(",",".") + " VNĐ");
     }
 }
