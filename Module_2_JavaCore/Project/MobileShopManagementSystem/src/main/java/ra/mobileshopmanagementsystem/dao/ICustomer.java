@@ -5,7 +5,6 @@ import ra.mobileshopmanagementsystem.model.Customer;
 import java.util.List;
 
 public interface ICustomer {
-    public void showMenuManageCustomer();
     public boolean addCustomer();
     public boolean deleteCustomer();
     public boolean updateCustomer();

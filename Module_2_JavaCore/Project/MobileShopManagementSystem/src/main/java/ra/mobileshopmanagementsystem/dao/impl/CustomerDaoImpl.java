@@ -13,14 +13,8 @@ import ra.mobileshopmanagementsystem.utils.CustomUtil;
 public class CustomerDaoImpl implements ICustomer {
     CustomUtil customUtil = new CustomUtil();
 
-    @Override
-    public void showMenuManageCustomer() {
-        System.out.println("Quản lý khách hàng");
-        System.out.println("1. Thêm mới khách hàng");
-        System.out.println("2. Cập nhật thông tin khách hàng");
-        System.out.println("3. Xóa khách hàng");
-        System.out.println("4. Hiển thị danh sách khách hàng");
-    }
+
+
 
     @Override
     public boolean addCustomer() {
@@ -62,10 +56,14 @@ public class CustomerDaoImpl implements ICustomer {
                 customerId = customUtil.getInt("Nhập ID khách hàng cần xóa: ");
                 Customer existing = getCustomerById(customerId);
                 if (existing != null) {
-                    ps = connection.prepareStatement("DELETE FROM customer WHERE id = ?");
-                    ps.setInt(1, customerId);
-                    int rowsAffected = ps.executeUpdate();
-                    return rowsAffected > 0;
+                    String confirm =  customUtil.getString("Bạn có chắc chắn muốn xóa khách hàng này không? (Nhập 'yes' để xác nhận): ");
+                    if (confirm.equalsIgnoreCase("yes")) {
+                        ps = connection.prepareStatement("DELETE FROM customer WHERE id = ?");
+                        ps.setInt(1, customerId);
+                        int rowsAffected = ps.executeUpdate();
+                        return rowsAffected > 0;
+                    }
+                    return false;
                 }
                 System.out.println("Không tìm thấy khách hàng với ID: " + customerId + ". Vui lòng thử lại.");
             }

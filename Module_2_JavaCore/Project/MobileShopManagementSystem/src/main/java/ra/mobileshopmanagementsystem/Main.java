@@ -1,6 +1,8 @@
 package ra.mobileshopmanagementsystem;
 
 import org.postgresql.util.PSQLException;
+import ra.mobileshopmanagementsystem.dao.impl.CustomerDaoImpl;
+import ra.mobileshopmanagementsystem.presentation.MoblieController;
 import ra.mobileshopmanagementsystem.utils.CustomUtil;
 import ra.mobileshopmanagementsystem.utils.DBUtil;
 
@@ -45,20 +47,51 @@ public class Main {
 //    }
 
     public static void main(String[] args) {
+        MoblieController moblieController = new MoblieController();
+        CustomerDaoImpl customerDao = new CustomerDaoImpl();
         CustomUtil customUtil = new CustomUtil();
         System.out.println("Chào mừng bạn đến với hệ thống quản lý cửa hàng điện thoại");
         System.out.println("Bạn cần đăng nhập với tư cách là ADMIN để truy cập vào hệ thống!");
-        customUtil.login();
+//        customUtil.login();
         while (true) {
             System.out.println("Chào mừng admin đến với hệ thống quản lý cửa hàng điện thoại");
-
-
-            switch (choice) {
+            switch (moblieController.showMenu()) {
                 case 1:
-                    // Quản lý khách hàng
-                    Cus customerManager = new CustomerManager();
-                    customerManager.showMenuManageCustomer();
+                    switch (moblieController.showMenuManageCustomer()) {
+                        case 1:
+                            if( customerDao.addCustomer()){
+                                System.out.println("Thêm khách hàng thành công!");
+                            } else {
+                                System.out.println("Thêm khách hàng thất bại!");
+                            }
+                            break;
+                        case 2:
+                            if( customerDao.updateCustomer()){
+                                System.out.println("Cập nhật khách hàng thành công!");
+                            } else {
+                                System.out.println("Cập nhật khách hàng thất bại!");
+                            }
+                            break;
+                        case 3:
+                            if( customerDao.deleteCustomer()){
+                                System.out.println("Xóa khách hàng thành công!");
+                            }else {
+                                System.out.println("Chưa có khách hàng nào được xóa!");
+                            }
+                            break;
+                        case 4:
+                            moblieController.displayListCustomer(customerDao.getAllCustomer());
+                            break;
+                        case 5:
+                            break;
+                        default:
+                            System.out.println("Vui lòng chọn chức năng hợp lệ!");
+                    }
                     break;
+                case 2:
+                default:
+                    System.out.println("Vui lòng chọn chức năng hợp lệ!");
+
             }
         }
     }
