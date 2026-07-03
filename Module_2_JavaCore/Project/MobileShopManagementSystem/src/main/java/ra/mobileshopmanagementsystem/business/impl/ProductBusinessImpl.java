@@ -8,15 +8,6 @@ import java.util.List;
 
 public class ProductBusinessImpl implements IProductBusiness {
     private ProductDaoImpl productDao = new ProductDaoImpl();
-    @Override
-    public Product getPhoneById(int id) {
-        List<Product> phones = productDao.getAllPhone();
-         return phones.stream()
-                .filter(phone -> phone.getId() == id)
-                .findFirst()
-                .orElse(null);
-
-    }
 
     @Override
     public List<Product> getPhoneByBrand(String brand) {

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ProductDaoImpl implements IProductDao {
     CustomUtil customUtil = new CustomUtil();
-    private boolean existsById(Connection connection, int id) throws SQLException {
+    public boolean existsById(Connection connection, int id) throws SQLException {
         String sql = "SELECT 1 FROM product WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);

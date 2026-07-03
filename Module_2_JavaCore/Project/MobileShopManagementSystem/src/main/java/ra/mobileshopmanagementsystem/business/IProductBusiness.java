@@ -5,7 +5,7 @@ import ra.mobileshopmanagementsystem.model.Product;
 import java.util.List;
 
 public interface IProductBusiness {
-    public Product getPhoneById(int id);
+
     public List<Product> getPhoneByBrand(String brand);
     public List<Product> getPhoneByNameAndAvailabilityStock(String name);
     public List<Product> getPhoneInRange(double minPrice, double maxPrice);
