@@ -8,8 +8,7 @@ import java.util.List;
 public interface IInvoice {
     public boolean addInvoice();
     public boolean addInvoiceDetail();
-    public boolean deleteInvoice();
-    public boolean updateInvoice();
     public List<Invoice> getAllInvoice();
     public List<InvoiceDetail> getAllInvoiceDetail(int invoiceId);
+    public void showAllInvoice();
 }

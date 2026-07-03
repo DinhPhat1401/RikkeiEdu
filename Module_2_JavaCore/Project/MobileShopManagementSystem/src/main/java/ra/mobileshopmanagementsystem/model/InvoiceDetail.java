@@ -57,4 +57,14 @@ public class InvoiceDetail {
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    @Override
+    public String toString() {
+        return
+                "\n---------------------------------\n"+
+                "Product ID: " + productId +
+                        "   |    Quantity: " + quantity +
+                        "   |    Unit Price: " + unitPrice;
+
+    }
 }

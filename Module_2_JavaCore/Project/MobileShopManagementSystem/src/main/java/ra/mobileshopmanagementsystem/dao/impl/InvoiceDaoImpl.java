@@ -6,17 +6,14 @@ import ra.mobileshopmanagementsystem.model.InvoiceDetail;
 import ra.mobileshopmanagementsystem.utils.CustomUtil;
 import ra.mobileshopmanagementsystem.utils.DBUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 public class InvoiceDaoImpl implements IInvoice {
     private CustomUtil customUtil = new CustomUtil();
 
-    boolean existsById(Connection connection, int id) throws SQLException {
+    private boolean existsById(Connection connection, int id) throws SQLException {
         String sql = "SELECT 1 FROM invoice WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -26,7 +23,7 @@ public class InvoiceDaoImpl implements IInvoice {
         }
     }
 
-    boolean existsByCustomerId(Connection connection, int customerId) throws SQLException {
+    private boolean existsByCustomerId(Connection connection, int customerId) throws SQLException {
         String sql = "SELECT 1 FROM customer WHERE customer_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, customerId);
@@ -34,6 +31,19 @@ public class InvoiceDaoImpl implements IInvoice {
                 return rs.next();
             }
         }
+    }
+
+    private int getStock(Connection connection, int productId) throws SQLException {
+        String sql = "SELECT stock FROM product WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("stock");
+                }
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -96,8 +106,44 @@ public class InvoiceDaoImpl implements IInvoice {
                     System.out.println("ID sản phẩm không tồn tại. Vui lòng nhập lại.");
                 }
             }
-            int quantity = customUtil.getInt("Nhập số lượng: ");
-            double unitPrice = customUtil.getDouble("Nhập giá đơn vị: ");
+            int quantity = 0;
+            while (true) {
+                quantity = customUtil.getInt("Nhập số lượng: ");
+                if (quantity > 0) {
+                    break;
+                }
+                int stock = getStock(connection, productId);
+                if (quantity > stock) {
+                    System.out.println("Số lượng vượt quá số lượng tồn kho. Vui lòng nhập lại.");
+                    continue;
+                }
+                if (stock == 0) {
+                    System.out.println("Sản phẩm đã hết hàng. Vui lòng chọn sản phẩm khác.");
+                    return false;
+                }
+                System.out.println("Số lượng phải lớn hơn 0. Vui lòng nhập lại.");
+            }
+
+            double unitPrice = 0;
+            while (true) {
+                unitPrice = customUtil.getDouble("Nhập giá đơn vị: ");
+                if (unitPrice > 0) {
+                    break;
+                }
+                System.out.println("Giá đơn vị phải lớn hơn 0. Vui lòng nhập lại.");
+
+            }
+            try {
+                PreparedStatement ps3 = null;
+                ps3 = connection.prepareStatement("UPDATE product SET stock = stock - ? WHERE id = ?");
+                ps3.setInt(1, quantity);
+                ps3.setInt(2, productId);
+                ps3.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("Lỗi khi cập nhật số lượng tồn kho: " + e.getMessage());
+                connection.rollback();
+                return false;
+            }
 
             try {
                 PreparedStatement ps1 = null;
@@ -126,17 +172,6 @@ public class InvoiceDaoImpl implements IInvoice {
                 return false;
             }
 
-            try {
-                PreparedStatement ps3 = null;
-                ps3 = connection.prepareStatement("UPDATE product SET stock = stock - ? WHERE id = ?");
-                ps3.setInt(1, quantity);
-                ps3.setInt(2, productId);
-                ps3.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("Lỗi khi cập nhật số lượng tồn kho: " + e.getMessage());
-                connection.rollback();
-                return false;
-            }
             connection.commit();
             return true;
         } catch (SQLException e) {
@@ -155,18 +190,37 @@ public class InvoiceDaoImpl implements IInvoice {
 
 
     @Override
-    public boolean deleteInvoice() {
-        return false;
-    }
-
-    @Override
-    public boolean updateInvoice() {
-        return false;
-    }
-
-    @Override
     public List<Invoice> getAllInvoice() {
-        return List.of();
+        List<Invoice> invoices = null;
+        Connection connection = null;
+        Invoice invoice = null;
+        Statement stm = null;
+        try {
+            connection = DBUtil.getConnection();
+            stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM invoice");
+            while (rs.next()) {
+                invoice = new Invoice();
+                invoice.setId(rs.getInt("id"));
+                invoice.setCustomerId(rs.getInt("customer_id"));
+                invoice.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class).toLocalDateTime());
+                invoice.setTotalAmount(rs.getDouble("total_amount"));
+                invoices.add(invoice);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println("Failed to close connection: " + e.getMessage());
+                }
+            }
+        }
+        return invoices;
+
     }
 
     @Override
@@ -193,4 +247,20 @@ public class InvoiceDaoImpl implements IInvoice {
         return invoiceDetails;
     }
 
+    @Override
+    public void showAllInvoice() {
+        List<Invoice> invoices = getAllInvoice();
+        if (invoices == null || invoices.isEmpty()) {
+            System.out.println("Danh sách hóa đơn trống.");
+            return;
+        }
+        System.out.println("Danh sách hóa đơn:");
+        for (Invoice invoice : invoices) {
+            System.out.println(invoice);
+            List<InvoiceDetail> invoiceDetails = getAllInvoiceDetail(invoice.getId());
+            for (InvoiceDetail invoiceDetail : invoiceDetails) {
+                System.out.println(invoiceDetail);
+            }
+        }
+    }
 }
