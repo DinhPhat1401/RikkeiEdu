@@ -1,6 +1,6 @@
 package ra.mobileshopmanagementsystem.dao.impl;
 
-import ra.mobileshopmanagementsystem.dao.ICustomer;
+import ra.mobileshopmanagementsystem.dao.ICustomerDao;
 import ra.mobileshopmanagementsystem.enums.Role;
 import ra.mobileshopmanagementsystem.model.Customer;
 import ra.mobileshopmanagementsystem.utils.DBUtil;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import ra.mobileshopmanagementsystem.utils.CustomUtil;
 
-public class CustomerDaoImpl implements ICustomer {
+public class CustomerDaoImpl implements ICustomerDao {
     CustomUtil customUtil = new CustomUtil();
 
 
@@ -30,8 +30,13 @@ public class CustomerDaoImpl implements ICustomer {
             ps.setString(5, customUtil.getString("Nhập địa chỉ: "));
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
-        } catch (Exception e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState.equals("23505")) {
+                System.out.println("User email already exists. Please use a different email.");
+            } else {
+                e.printStackTrace();
+            }
         } finally {
             if (connection != null) {
                 try {
@@ -52,12 +57,12 @@ public class CustomerDaoImpl implements ICustomer {
         try {
             connection = DBUtil.getConnection();
             int customerId = -1;
-            while (true) {
+
                 customerId = customUtil.getInt("Nhập ID khách hàng cần xóa: ");
                 Customer existing = getCustomerById(customerId);
                 if (existing != null) {
-                    String confirm =  customUtil.getString("Bạn có chắc chắn muốn xóa khách hàng này không? (Nhập 'yes' để xác nhận): ");
-                    if (confirm.equalsIgnoreCase("yes")) {
+                    String confirm =  customUtil.getString("Bạn có chắc chắn muốn xóa khách hàng này không (Y/n): ");
+                    if (confirm.equalsIgnoreCase("y")) {
                         ps = connection.prepareStatement("DELETE FROM customer WHERE id = ?");
                         ps.setInt(1, customerId);
                         int rowsAffected = ps.executeUpdate();
@@ -66,7 +71,7 @@ public class CustomerDaoImpl implements ICustomer {
                     return false;
                 }
                 System.out.println("Không tìm thấy khách hàng với ID: " + customerId + ". Vui lòng thử lại.");
-            }
+
         } catch (Exception e) {
             System.out.println("SQL Exception: " + e.getMessage());
         } finally {
@@ -104,8 +109,13 @@ public class CustomerDaoImpl implements ICustomer {
                 }
                 System.out.println("Không tìm thấy khách hàng với ID: " + customerId + ". Vui lòng thử lại.");
             }
-        } catch (Exception e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState.equals("23505")) {
+                System.out.println("User email already exists.");
+            } else {
+                e.printStackTrace();
+            }
         } finally {
             if (connection != null) {
                 try {

@@ -4,7 +4,7 @@ import ra.mobileshopmanagementsystem.model.Customer;
 
 import java.util.List;
 
-public interface ICustomer {
+public interface ICustomerDao {
     public boolean addCustomer();
     public boolean deleteCustomer();
     public boolean updateCustomer();

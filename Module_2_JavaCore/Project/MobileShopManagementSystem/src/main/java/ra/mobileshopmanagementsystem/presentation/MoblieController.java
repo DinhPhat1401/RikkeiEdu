@@ -38,9 +38,20 @@ public class MoblieController {
         System.out.println("4. Hiển thị danh sách điện thoại");
         System.out.println("5. Tìm kiếm điện thoại theo brand");
         System.out.println("6. Tìm kiếm điện thoại trong khoảng giá");
-        int choice = customUtil.getInt("Vui lòng chọn chức năng: ");
-        return choice;
+        System.out.println("7. Tìm kiếm điện thoại theo tên với điều kiện tồn kho > 0");
+        System.out.println("8. Quay lại menu chính");
+        return customUtil.getInt("Vui lòng chọn chức năng: ");
     }
+    public int showMenuManageOrder() {
+        System.out.println("Quản lý đơn hàng");
+        System.out.println("1. Thêm mới đơn hàng");
+        System.out.println("2. Hiện thị danh sách đơn hàng");
+        System.out.println("3. Tìm kiếm hóa đơn");
+        System.out.println("4. Thống kê doanh thu");
+        System.out.println("5. Quay lại menu chính");
+        return customUtil.getInt("Vui lòng chọn chức năng: ");
+    }
+
 
     public void login() {
         while (true) {
@@ -85,6 +96,17 @@ public class MoblieController {
                 System.out.println(customer);
             }
         }
-
     }
+    public void displayListPhone(List<?> phones) {
+        if (phones.isEmpty()) {
+            System.out.println("Danh sách điện thoại trống.");
+        } else {
+            System.out.println("Danh sách điện thoại:");
+            for (Object phone : phones) {
+                System.out.println(phone);
+            }
+        }
+    }
+
+
 }
