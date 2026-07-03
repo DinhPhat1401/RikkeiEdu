@@ -1,10 +1,12 @@
 package ra.mobileshopmanagementsystem.presentation;
 
+import org.mindrot.jbcrypt.BCrypt;
 import ra.mobileshopmanagementsystem.utils.CustomUtil;
 import ra.mobileshopmanagementsystem.utils.DBUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -42,21 +44,25 @@ public class MoblieController {
 
     public void login() {
         while (true) {
-            String email = customUtil.getString("Nhập email: ");
-            String password = customUtil.getString("Nhập mật khẩu: ");
+            String email = customUtil.getEmail("Nhập email: ");
+            String password = customUtil.getPassword("Nhập mật khẩu: ");
             PreparedStatement ps = null;
             Connection conn = null;
             try {
                 conn = DBUtil.getConnection();
-                ps = conn.prepareStatement("SELECT * FROM customer WHERE email = ? AND password = ? AND role = 'ADMIN'");
+                ps = conn.prepareStatement("SELECT * FROM customer WHERE email = ?  AND role = 'ADMIN'");
                 ps.setString(1, email);
-                ps.setString(2, password);
-                if (ps.executeQuery().next()) {
-                    System.out.println("Đăng nhập thành công!");
-                    break;
+                ResultSet rs = ps.executeQuery();
+                if (!rs.next()) {
+                    System.out.println("Email không tồn tại hoặc không phải tài khoản ADMIN.");
                 } else {
-                    System.out.println("Đăng nhập thất bại! Vui lòng kiểm tra email, mật khẩu và thử lại.");
-
+                    String hashedPassword = rs.getString("password");
+                    if (BCrypt.checkpw(password, hashedPassword)) {
+                        System.out.println("Đăng nhập thành công!");
+                        break;
+                    } else {
+                        System.out.println("Sai mật khẩu!");
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

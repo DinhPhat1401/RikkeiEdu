@@ -25,8 +25,8 @@ public class CustomerDaoImpl implements ICustomer {
             ps = connection.prepareStatement("INSERT INTO customer (name, phone, email, password, address, role) VALUES (?, ?, ?, ?, ?, 'CUSTOMER')");
             ps.setString(1, customUtil.getString("Nhập tên khách hàng: "));
             ps.setString(2, customUtil.getString("Nhập số điện thoại: "));
-            ps.setString(3, customUtil.getString("Nhập email: "));
-            ps.setString(4, customUtil.getString("Nhập mật khẩu: "));
+            ps.setString(3, customUtil.getEmail("Nhập email: "));
+            ps.setString(4, customUtil.getPassword("Nhập mật khẩu: "));
             ps.setString(5, customUtil.getString("Nhập địa chỉ: "));
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -95,8 +95,8 @@ public class CustomerDaoImpl implements ICustomer {
                     ps = connection.prepareStatement("UPDATE customer SET name = ?, phone = ?, email = ?, password = ?, address = ? WHERE id = ?");
                     ps.setString(1, customUtil.getString("Nhập tên khách hàng: "));
                     ps.setString(2, customUtil.getString("Nhập số điện thoại: "));
-                    ps.setString(3, customUtil.getString("Nhập email: "));
-                    ps.setString(4, customUtil.getString("Nhập mật khẩu: "));
+                    ps.setString(3, customUtil.getEmail("Nhập email: "));
+                    ps.setString(4, customUtil.getPassword("Nhập mật khẩu: "));
                     ps.setString(5, customUtil.getString("Nhập địa chỉ: "));
                     ps.setInt(6, customerId);
                     int rowsAffected = ps.executeUpdate();
