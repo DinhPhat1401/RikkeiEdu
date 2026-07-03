@@ -57,4 +57,14 @@ public class CustomUtil {
     public boolean checkPassword(String password, String hashPassword){
         return BCrypt.checkpw(password, hashPassword);
     }
+    public double getDouble(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                return Double.parseDouble(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Vui lòng nhập số hợp lệ!");
+            }
+        }
+    }
 }
