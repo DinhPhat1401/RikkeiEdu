@@ -52,11 +52,9 @@ public class Invoice {
 
     @Override
     public String toString() {
-        return "INVOICE \n" +
-                "ID: " + id +
-                "           Customer Id: " + customerId +
-                "\n Created At: " + createdAt +
-                "\n Total Amount: " + totalAmount +
-                "Invoice Detail: ";
+        return "══════════════════════════════════════════\n" +
+                "ID: " + id + " | Customer: " + customerId + " | Total: " +String.format("%,.2f",totalAmount)  + " ₫\n" +
+                "Created: " + createdAt + "\n" ;
+
     }
 }

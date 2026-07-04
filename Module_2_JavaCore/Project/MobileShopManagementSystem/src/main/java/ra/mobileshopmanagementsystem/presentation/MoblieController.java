@@ -51,12 +51,28 @@ public class MoblieController {
         System.out.println("5. Quay lại menu chính");
         return customUtil.getInt("Vui lòng chọn chức năng: ");
     }
+    public int showSubMenuSearchInvoice() {
+        System.out.println("Bạn muốn tìm kiếm hóa đơn theo:");
+        System.out.println("1. Tên khách hàng");
+        System.out.println("2. Ngày tháng năm xuất hóa đơn");
+        System.out.println("3. Quay lại quản lý hóa đơn");
+        return customUtil.getInt("Vui lòng chọn chức năng: ");
+    }
+    public int showSubMenuRevenueStatistics() {
+        System.out.println("Bạn muốn thống kê doanh thu theo:");
+        System.out.println("1. Ngày");
+        System.out.println("2. Tháng");
+        System.out.println("3. Năm");
+        System.out.println("4. Quay lại menu thống kê doanh thu");
+        return customUtil.getInt("Vui lòng chọn chức năng: ");
+    }
+
 
 
     public void login() {
         while (true) {
             String email = customUtil.getEmail("Nhập email: ");
-            String password = customUtil.getPassword("Nhập mật khẩu: ");
+            String password = customUtil.getString("Nhập mật khẩu: ");
             PreparedStatement ps = null;
             Connection conn = null;
             try {
@@ -88,7 +104,7 @@ public class MoblieController {
     }
 
     public void displayListCustomer(List<?> customers) {
-        if (customers.isEmpty()) {
+        if (customers == null || customers.isEmpty()) {
             System.out.println("Danh sách khách hàng trống.");
         } else {
             System.out.println("Danh sách khách hàng:");

@@ -9,7 +9,7 @@ public interface IProductDao {
     public boolean deletePhone();
     public boolean updatePhone();
     public List<Product> getAllPhone();
-
+    public Product getPhoneById(int id);
 
 
 }

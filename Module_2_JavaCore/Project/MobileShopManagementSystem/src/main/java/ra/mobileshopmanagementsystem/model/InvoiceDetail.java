@@ -60,11 +60,9 @@ public class InvoiceDetail {
 
     @Override
     public String toString() {
-        return
-                "\n---------------------------------\n"+
-                "Product ID: " + productId +
-                        "   |    Quantity: " + quantity +
-                        "   |    Unit Price: " + unitPrice;
-
+        return String.format(
+                "│ ID Sản Phẩm: %-10d │ Số Lượng: %-8d │ Giá: %,.2f ₫ │" + "\n══════════════════════════════════════════\n",
+                productId, quantity, unitPrice
+        );
     }
 }

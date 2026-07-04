@@ -7,6 +7,7 @@ import ra.mobileshopmanagementsystem.utils.CustomUtil;
 import ra.mobileshopmanagementsystem.utils.DBUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoImpl implements IProductDao {
@@ -20,6 +21,7 @@ public class ProductDaoImpl implements IProductDao {
             }
         }
     }
+
     @Override
     public boolean addPhone() {
         Connection connection = null;
@@ -121,7 +123,7 @@ public class ProductDaoImpl implements IProductDao {
 
     @Override
     public List<Product> getAllPhone() {
-        List<Product> phones = null;
+        List<Product> phones = new ArrayList<>();
         Connection connection = null;
         Statement stm = null;
         try {
@@ -150,6 +152,38 @@ public class ProductDaoImpl implements IProductDao {
             }
         }
         return phones;
+    }
+
+    @Override
+    public Product getPhoneById(int id) {
+        Connection connection = null;
+        Product phone = new Product();
+        try{
+            connection = DBUtil.getConnection();
+            String sql = "SELECT * FROM product WHERE id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                phone.setId(rs.getInt("id"));
+                phone.setName(rs.getString("name"));
+                phone.setBrand(rs.getString("brand"));
+                phone.setPrice(rs.getDouble("price"));
+                phone.setStock(rs.getInt("stock"));
+            }
+
+        } catch (Exception e) {
+            System.out.println("SQL Exception: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println("Failed to close connection: " + e.getMessage());
+                }
+            }
+        }
+        return phone;
     }
 
 }

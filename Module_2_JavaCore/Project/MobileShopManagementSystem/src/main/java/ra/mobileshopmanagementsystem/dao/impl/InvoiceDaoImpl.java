@@ -8,10 +8,12 @@ import ra.mobileshopmanagementsystem.utils.DBUtil;
 
 import java.sql.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceDaoImpl implements IInvoice {
     private CustomUtil customUtil = new CustomUtil();
+    private ProductDaoImpl productDao = new ProductDaoImpl();
 
     private boolean existsById(Connection connection, int id) throws SQLException {
         String sql = "SELECT 1 FROM invoice WHERE id = ?";
@@ -22,9 +24,18 @@ public class InvoiceDaoImpl implements IInvoice {
             }
         }
     }
+    private boolean existsProductById(Connection connection, int id) throws SQLException {
+        String sql = "SELECT 1 FROM product WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
 
     private boolean existsByCustomerId(Connection connection, int customerId) throws SQLException {
-        String sql = "SELECT 1 FROM customer WHERE customer_id = ?";
+        String sql = "SELECT 1 FROM customer WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, customerId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -61,13 +72,25 @@ public class InvoiceDaoImpl implements IInvoice {
                     System.out.println("ID khách hàng không tồn tại. Vui lòng nhập lại.");
                 }
             }
-            ps = connection.prepareStatement("INSERT INTO invoice (customer_id, created_at, total_price) VALUES (?, ?, ?)");
+            connection.setAutoCommit(false);
+            ps = connection.prepareStatement("INSERT INTO invoice (customer_id, created_at, total_amount) VALUES (?, ?, ?)"
+                    , Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, customerId);
             OffsetDateTime currentTimestamp = OffsetDateTime.now();
             ps.setObject(2, currentTimestamp);
             ps.setDouble(3, 0.0);
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            if (rowsAffected > 0) {
+                connection.commit();
+                ResultSet generatedKeys = ps.getGeneratedKeys();
+                if(generatedKeys.next() && addInvoiceDetail(connection,generatedKeys.getInt(1))){
+                    System.out.println("Thêm chi tiết đơn hàng thành công!");
+                    connection.commit();
+                    return true;
+                } else {
+                    System.out.println("Thêm chi tiết đơn hàng thất bại!");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -83,24 +106,15 @@ public class InvoiceDaoImpl implements IInvoice {
     }
 
     @Override
-    public boolean addInvoiceDetail() {
-        Connection connection = null;
+    public boolean addInvoiceDetail(Connection connection,int invoiceId) {
         try {
             connection = DBUtil.getConnection();
             connection.setAutoCommit(false);
-            int invoiceId = -1;
-            while (true) {
-                invoiceId = customUtil.getInt("Nhập ID hóa đơn: ");
-                if (existsById(connection, invoiceId)) {
-                    break;
-                } else {
-                    System.out.println("ID hóa đơn không tồn tại. Vui lòng nhập lại.");
-                }
-            }
+
             int productId = -1;
             while (true) {
                 productId = customUtil.getInt("Nhập ID sản phẩm: ");
-                if (existsById(connection, productId)) {
+                if (existsProductById(connection, productId)) {
                     break;
                 } else {
                     System.out.println("ID sản phẩm không tồn tại. Vui lòng nhập lại.");
@@ -109,9 +123,6 @@ public class InvoiceDaoImpl implements IInvoice {
             int quantity = 0;
             while (true) {
                 quantity = customUtil.getInt("Nhập số lượng: ");
-                if (quantity > 0) {
-                    break;
-                }
                 int stock = getStock(connection, productId);
                 if (quantity > stock) {
                     System.out.println("Số lượng vượt quá số lượng tồn kho. Vui lòng nhập lại.");
@@ -121,18 +132,16 @@ public class InvoiceDaoImpl implements IInvoice {
                     System.out.println("Sản phẩm đã hết hàng. Vui lòng chọn sản phẩm khác.");
                     return false;
                 }
-                System.out.println("Số lượng phải lớn hơn 0. Vui lòng nhập lại.");
-            }
-
-            double unitPrice = 0;
-            while (true) {
-                unitPrice = customUtil.getDouble("Nhập giá đơn vị: ");
-                if (unitPrice > 0) {
-                    break;
+                if (quantity <= 0) {
+                    System.out.println("Số lượng phải lớn hơn 0. Vui lòng nhập lại.");
+                    continue;
                 }
-                System.out.println("Giá đơn vị phải lớn hơn 0. Vui lòng nhập lại.");
 
+                break;
             }
+
+            double unitPrice = productDao.getPhoneById(productId).getPrice();
+//            System.err.println("Đơn giá sản phẩm: " + unitPrice);
             try {
                 PreparedStatement ps3 = null;
                 ps3 = connection.prepareStatement("UPDATE product SET stock = stock - ? WHERE id = ?");
@@ -147,7 +156,7 @@ public class InvoiceDaoImpl implements IInvoice {
 
             try {
                 PreparedStatement ps1 = null;
-                ps1 = connection.prepareStatement("INSERT INTO invoice_detail (invoice_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
+                ps1 = connection.prepareStatement("INSERT INTO invoice_details (invoice_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
                 ps1.setInt(1, invoiceId);
                 ps1.setInt(2, productId);
                 ps1.setInt(3, quantity);
@@ -162,7 +171,7 @@ public class InvoiceDaoImpl implements IInvoice {
 
             try {
                 PreparedStatement ps2 = null;
-                ps2 = connection.prepareStatement("UPDATE invoice SET total_price = ? WHERE id = ?");
+                ps2 = connection.prepareStatement("UPDATE invoice SET total_amount = ? WHERE id = ?");
                 ps2.setDouble(1, unitPrice * quantity);
                 ps2.setInt(2, invoiceId);
                 ps2.executeUpdate();
@@ -191,7 +200,7 @@ public class InvoiceDaoImpl implements IInvoice {
 
     @Override
     public List<Invoice> getAllInvoice() {
-        List<Invoice> invoices = null;
+        List<Invoice> invoices = new ArrayList<>();
         Connection connection = null;
         Invoice invoice = null;
         Statement stm = null;
@@ -226,11 +235,11 @@ public class InvoiceDaoImpl implements IInvoice {
     @Override
     public List<InvoiceDetail> getAllInvoiceDetail(int invoiceId) {
         InvoiceDetail invoiceDetail = new InvoiceDetail();
-        List<InvoiceDetail> invoiceDetails = null;
+        List<InvoiceDetail> invoiceDetails = new ArrayList<>();
         Connection connection = null;
         try {
             connection = DBUtil.getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM invoice_detail WHERE invoice_id = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM invoice_details WHERE invoice_id = ?");
             ps.setInt(1, invoiceId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -242,25 +251,26 @@ public class InvoiceDaoImpl implements IInvoice {
                 invoiceDetails.add(invoiceDetail);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+//            System.out.println("Lỗi khi lấy chi tiết hóa đơn: " + e.getMessage());
+            System.out.println("Chưa có chi tiết đơn hàng");
         }
         return invoiceDetails;
     }
 
     @Override
     public void showAllInvoice() {
-        List<Invoice> invoices = getAllInvoice();
-        if (invoices == null || invoices.isEmpty()) {
-            System.out.println("Danh sách hóa đơn trống.");
-            return;
-        }
-        System.out.println("Danh sách hóa đơn:");
-        for (Invoice invoice : invoices) {
-            System.out.println(invoice);
-            List<InvoiceDetail> invoiceDetails = getAllInvoiceDetail(invoice.getId());
-            for (InvoiceDetail invoiceDetail : invoiceDetails) {
-                System.out.println(invoiceDetail);
+            List<Invoice> invoices = getAllInvoice();
+            if (invoices == null || invoices.isEmpty()) {
+                System.out.println("Danh sách hóa đơn trống.");
+                return;
             }
-        }
+            System.out.println("Danh sách hóa đơn:");
+            for (Invoice invoice : invoices) {
+                System.out.println(invoice);
+                List<InvoiceDetail> invoiceDetails = getAllInvoiceDetail(invoice.getId());
+                for (InvoiceDetail invoiceDetail : invoiceDetails) {
+                    System.out.println(invoiceDetail);
+                }
+            }
     }
 }
